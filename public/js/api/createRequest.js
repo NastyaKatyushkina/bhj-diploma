@@ -5,33 +5,29 @@
 const createRequest = (options = {}) => {
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
-    xhr.withCredentials = true;
-    xhr.responseType = options.responseType;
+    xhr.responseType = 'json';
     if (options.method === "GET") {
-        for (let key in options.data) {
-            options.url += `?${key}=${options.data[key]}&`;
-        }
+        const query = new URLSearchParams(options.data)
+        console.log(query.toString())
+        xhr.open("GET", options.url + "?" + query.toString, true)
+        xhr.send()
     } else {
-        for (let key in options.data) {
-            formData.append(key, options.data[key]);
+        const formData = new FormData()
+        for (const [key, value] of Object.entries(options.data)) {
+            formData.append(key, value)
         }
+        xhr.open(options.method, options.url, true);
+        xhr.send(formData);
     }
-
-    xhr.addEventListener("readystatechange", () => {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            options.callback(null, xhr.response);
-            console.log(xhr.response);
-        } else if (xhr.readyState === 4 && xhr.status !== 200) {
-            const err = new Error("error");
-            options.callback(err);
-        }
+    xhr.addEventListener("load", () => {
+        options.callback(null, xhr.response)
+    })
+    xhr.addEventListener("error", () => {
+        options.callback(xhr.status, null)
     })
 
-    try {
-        xhr.open(options.method, options.url);
-        xhr.send(formData);
-    } catch (err) {
-        console.log(err);
-        callback(err);
-    }
 };
+createRequest({
+    method: "POST",
+    data: { key: "value" }
+})

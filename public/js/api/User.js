@@ -41,9 +41,9 @@ class User {
       method: 'GET',
       callback: (err, response) => {
         if (response && response.user) {
-          User.setCurrent(response.user);
+          this.setCurrent(response.user);
         } else {
-          User.unsetCurrent();
+          this.unsetCurrent();
         }
         callback(err, response);
       }
@@ -80,13 +80,13 @@ class User {
    * */
   static register(data, callback) {
     return createRequest({
-      url: User.URL + '/register',
+      url: this.URL + '/register',
       data: data,
       responseType: 'json',
       method: 'POST',
       callback: (err, response) => {
         if (response && response.user) {
-          User.setCurrent(response.user);
+          this.setCurrent(response.user);
         } 
         callback(err, response);
       }

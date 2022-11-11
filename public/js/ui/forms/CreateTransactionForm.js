@@ -17,15 +17,29 @@ class CreateTransactionForm extends AsyncForm {
    * Обновляет в форме всплывающего окна выпадающий список
    * */
   renderAccountsList() {
-    const accountsSelect = this.element.querySelector(".accounts-select");
-    Account.list(User.current(), (err, response) => {
-      if (response && response.data) {
-        accountsSelect.innerHTML = "";
-        response.data.forEach(item => {
-          accountsSelect.innerHTML += `<option value="${item.id}">${item.name}</option>`;
-        });
+    const accountList = this.element.querySelector('.accounts-select');
+    if (User.current()) {
+      Account.list(User.current(), (error, response) => {
+        accountList.replaceChildren();
+
+        if (response.data.length > 0) {
+            response.data.forEach((element) => {
+                addAccount(element);
+            });
+        } else {
+          const emptyOption = document.createElement('option');
+          emptyOption.textContent = 'Нет данных';
+          accountList.appendChild(emptyOption);
+        }
+      });
+
+      function addAccount(item) {
+        const accountOption = document.createElement('option');
+        accountOption.value = item.id;
+        accountOption.textContent = item.name;
+        accountList.appendChild(accountOption);
       }
-    });
+    }
   }
 
   /**
@@ -35,19 +49,13 @@ class CreateTransactionForm extends AsyncForm {
    * в котором находится форма
    * */
   onSubmit(data) {
-    Transaction.create(options.data, (err, response) => {
-      if (response && response.success) {
-        const modal = document.querySelectorAll(".modal");
-        modal.forEach(form => {
-          if (form.getAttribute("id") == "modal-new-income") {
-            App.getModal("newIncome").close();
-          } else if (form.getAttribute("id") == "modal-new-expense") {
-            App.getModal("newExpense").close();
-          }
-        });
-        App.update();
-        this.element.reset();
+    Transaction.create(data, (error, response) => {
+      if (response.success) {
+          this.element.reset();
+          App.getModal('newIncome').close();
+          App.getModal('newExpense').close();
+          App.update();
       }
-    })
+    });
   }
 }
