@@ -35,7 +35,7 @@ class AccountsWidget {
       const closestLi = item.closest('li');
 
       if (item.classList.contains('create-account')) {
-        App.getModal('newAccount').open();
+        App.getModal('createAccount').open();
       }
       if (closestLi.classList.contains('account')) {
         this.onSelectAccount(closestLi);

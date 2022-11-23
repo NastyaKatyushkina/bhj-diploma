@@ -9,7 +9,7 @@ const createRequest = (options = {}) => {
     if (options.method === "GET") {
         const query = new URLSearchParams(options.data)
         console.log(query.toString())
-        xhr.open("GET", options.url + "?" + query.toString, true)
+        xhr.open("GET", options.url + "?" + query.toString(), true)
         xhr.send()
     } else {
         const formData = new FormData()
@@ -27,7 +27,3 @@ const createRequest = (options = {}) => {
     })
 
 };
-createRequest({
-    method: "POST",
-    data: { key: "value" }
-})

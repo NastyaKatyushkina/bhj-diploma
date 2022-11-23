@@ -36,7 +36,6 @@ class User {
   static fetch(callback) {
     const options = {
       url: this.URL + "/current",
-      data: data,
       responseType: 'json',
       method: 'GET',
       callback: (err, response) => {
